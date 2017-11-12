@@ -5,19 +5,19 @@ import { createTodo } from './create-todo';
 
 export class TodoReducer {
     @Action 
-    createTodo(state: Todo[], action: CreateTodoAction): Todo[] {
+    public createTodo(state: Todo[], action: CreateTodoAction): Todo[] {
         return [ ...state, createTodo(action.payload)]
     }
 
     @Action
-    markDone(state: Todo[], action: MarkTodoDoneAction): Todo[] {
+    public markDone(state: Todo[], action: MarkTodoDoneAction): Todo[] {
         return state.map(todo => {
             return todo.id === action.payload ? { ...todo, done: true } : todo
         });
     }
 
     @Action 
-    archiveTodo(state: Todo[], action: ArchiveTodoAction): Todo[] {
+    public archiveTodo(state: Todo[], action: ArchiveTodoAction): Todo[] {
         return state.filter(todo => todo.id !== action.payload);
     }
 }
