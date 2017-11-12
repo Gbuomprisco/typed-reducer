@@ -1,44 +1,38 @@
-export interface Options {
-    freeze: boolean;
-}
-  
-export interface Action { type: string, payload?: any };
-export interface Methods<State> {[key: string]: (state: State, payload: any) => State};
+export interface ReducerOptions { freeze: boolean }
+export interface ActionReducer { type: string, payload?: any };
 
-const defaults: Options = {
+interface Methods<State> {[key: string]: (state: State, payload: any) => State};
+
+const defaults: ReducerOptions = {
     freeze: false
 };
 
 /**
  * @name createReducer
  */
-export function createReducer<State>(Reducer: { new(): any }, options: Options = defaults) {
+export function createReducer<State>(Reducer: { new(): any }, options: ReducerOptions = defaults) {
     const instance = Object.create(Reducer.prototype);
     const methods: Methods<State> = Object
-    .getOwnPropertyNames(Reducer.prototype)
-    .filter(method => method !== 'constructor')
-    .map(method => {
-        const key = getMetadataKey(method);
-        const meta = Reflect.getMetadata(key, Reducer.prototype);
+        .getOwnPropertyNames(Reducer.prototype)
+        .filter(method => method !== 'constructor')
+        .map(method => {
+            const meta = Reflect.getMetadata(method, Reducer.prototype);
 
-        return { [meta.type]: instance[method] };
-    })
-    .reduce((acc: object, current: object) => ({...acc, ...current}));
+            return { [meta.type]: instance[method] };
+        })
+        .reduce((acc: object, current: object) => ({...acc, ...current}));
 
-    return (initialState: State): (state: State, action: Action) => State => {
+    return (initialState: State): (state: State, action: ActionReducer) => State => {
         if (options.freeze) {
             Object.freeze(initialState);
         }
 
-        return (state: State = initialState, action: Action): State => {
-            const fn = (...args: any[]): State => methods[action.type].apply(instance, args);
-            const hasMethod = methods[action.type] && typeof methods[action.type] === 'function';
+        return (state: State = initialState, action: ActionReducer): State => {
+            const exists = methods[action.type] && typeof methods[action.type] === 'function';
+            const reducer = exists ? 
+                (...args: any[]): State => methods[action.type].apply(instance, args) : undefined;
 
-            if (hasMethod) {
-                return fn(state, action);
-            }
-
-            return state;
+            return reducer ? reducer(state, action) : state;
         };
     }
 }
@@ -51,15 +45,5 @@ export function Action<C, P>(instance: C, method: string, descriptor: PropertyDe
     const action = types[1];
     const type = new action().type;
 
-    Reflect.defineMetadata(getMetadataKey(method), { type, action }, instance);
-}
-
-
-/**
- * @name getMetadataKey
- * @param instance 
- * @param method 
- */
-function getMetadataKey(method: string): string {
-    return `__${method}__key`;
+    Reflect.defineMetadata(method, { type, action }, instance);
 }
