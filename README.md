@@ -81,7 +81,7 @@ class Reducer {
 }
 ```
 
-What happens a runtime?
+What happens at runtime?
 
 ![ScreenShot](https://raw.github.com/gbuomprisco/typed-reducer/master/example-app/type-error.png)
 
