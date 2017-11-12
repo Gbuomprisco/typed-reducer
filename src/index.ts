@@ -19,7 +19,7 @@ export function createReducer<State>(Reducer: { new(): any }, options: Options =
     .getOwnPropertyNames(Reducer.prototype)
     .filter(method => method !== 'constructor')
     .map(method => {
-      const key = getMetadataKey(instance, method);
+      const key = getMetadataKey(method);
       const meta = Reflect.getMetadata(key, Reducer.prototype);
       return { [meta]: instance[method] };
     })
@@ -49,8 +49,7 @@ export function createReducer<State>(Reducer: { new(): any }, options: Options =
  */
 export function OfType<C>(type: string) {
   return function (instance: C, method: string): void {
-    const key = getMetadataKey(instance, method);
-    Reflect.defineMetadata(key, type, instance);
+    Reflect.defineMetadata(getMetadataKey(method), type, instance);
   }
 }
 
@@ -62,12 +61,13 @@ export function OfAction<C, P, A extends Action>(action: new (payload?: P) => A)
   return function (instance: C, method: string, descriptor: PropertyDescriptor): void {
     const type: string = new action().type;
     const value = descriptor.value;
-    const key = getMetadataKey(instance, method);
 
-    Reflect.defineMetadata(key, type, instance);
+    Reflect.defineMetadata(getMetadataKey(method), type, instance);
 
     descriptor.value = function () {
-        if (arguments[1] instanceof action === false) {
+        const types = Reflect.getMetadata('design:paramtypes', instance, method);
+
+        if (types[1] && arguments[1] instanceof types[1] === false) {
           throw new Error(`Invalid action, expected instance of ${action.name}`);
         }
 
@@ -81,6 +81,6 @@ export function OfAction<C, P, A extends Action>(action: new (payload?: P) => A)
  * @param instance 
  * @param method 
  */
-function getMetadataKey(instance: any, method: string): string {
-  return `${instance.name}__${method}__key`;
+function getMetadataKey(method: string): string {
+  return `__${method}__key`;
 }
