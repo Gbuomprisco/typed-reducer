@@ -9,7 +9,7 @@ This library is a framework-agnostic attempt to create typed reducers with Types
 ## Usage
 
 ```javascript
-import { createReducer, OfAction, OfType } from 'typed-reducer';
+import { createReducer, Action } from 'typed-reducer';
 
 const ACTION_TYPE = 'ACTION_TYPE';
 
@@ -21,14 +21,8 @@ class MyAction {
 
 // create a class, each method is a branch of what we would normally do with a switch statement
 export class Reducer {
-    @OfAction(MyAction) // bind method to an action
+    @Action
     public someMethod(state: string[], action: MyAction): State {
-        return [ ...state, action.payload];
-    }
-
-    // alternatively
-    @OfType(ACTION_TYPE) // bind method to an action type
-    public anotherMethod(state: string[], action: MyAction): State {
         return [ ...state, action.payload];
     }
 }
@@ -40,24 +34,24 @@ export const reducer = createReducer(Reducer)(initialState);
 ### Full example
 
 ```javascript
-import { createReducer, OfAction } from 'typed-reducer';
+import { createReducer, Action } from 'typed-reducer';
 import { CreateTodoAction, MarkTodoDoneAction, ArchiveTodoAction } from './todo.actions';
 import { createTodo } from './create-todo';
 
 export class TodoReducer {
-    @OfAction(CreateTodoAction)
+    @Action
     public createTodo(state: Todo[], action: CreateTodoAction): Todo[] {
         return [ ...state, createTodo(action.payload)];
     }
 
-    @OfAction(MarkTodoDoneAction)
+    @Action
     public markDone(state: Todo[], action: MarkTodoDoneAction): Todo[] {
         return state.map(todo => {
             return todo.id === action.payload ? { ...todo, done: true } : todo
         });
     }
 
-    @OfAction(ArchiveTodoAction)
+    @Action
     public archiveTodo(state: Todo[], action: ArchiveTodoAction): Todo[] {
         return state.filter(todo => todo.id !== action.payload);
     }
@@ -66,25 +60,6 @@ export class TodoReducer {
 const initialState = [];
 export const todos = createReducer(TodoReducer)(initialState);
 ```
-
-### Type checking
-
-Let's assume we make a mistake, and set the action type to `AnotherAction` when instead we bind reducer action
-to `ArchiveTodoAction`.
-
-```javascript
-class Reducer {
-    @OfAction(ArchiveTodoAction)
-    public archiveTodo(state: Todo[], action: AnotherAction): Todo[] {
-        return state.filter(todo => todo.id !== action.payload);
-    }
-}
-```
-
-What happens a runtime?
-
-![ScreenShot](https://raw.github.com/gbuomprisco/typed-reducer/master/example-app/type-error.png)
-
 
 ### Options
 The only option available at the moment is `freeze`, which will throw errors if

@@ -1,5 +1,3 @@
-import { AppState } from '../../../example/state';
-
 export interface Todo {
     description: string;
     title: string;

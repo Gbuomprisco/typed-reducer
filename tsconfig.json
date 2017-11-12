@@ -18,7 +18,8 @@
         "node_modules/@types"
       ],
       "types": [
-        "node"
+        "node",
+        "reflect-metadata"
       ],
       "lib": [
         "es2017",
