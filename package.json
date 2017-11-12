@@ -1,0 +1,46 @@
+{
+  "name": "typed-reducer",
+  "version": "0.0.1",
+  "description": "Framework-agnostic and class-based typed reducers",
+  "main": "index.js",
+  "scripts": {
+    "test": "npm test",
+    "build": "tsc -p tsconfig.json",
+    "prepublish": "npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gbuomprisco/typed-reducer.git"
+  },
+  "keywords": [
+    "ngrx",
+    "redux",
+    "typed",
+    "reducers",
+    "reducer",
+    "typescript"
+  ],
+  "author": "Giancarlo Buomprisco",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/gbuomprisco/typed-reducer/issues"
+  },
+  "homepage": "https://github.com/gbuomprisco/typed-reducer#readme",
+  "peerDependencies": {
+    "reflect-metadata": "^0.1.10"
+  },
+  "dependencies": {
+    "reflect-metadata": "^0.1.10"
+  },
+  "devDependencies": {
+    "@types/node": "^8.0.51",
+    "typescript": "^2.6.1"
+  },
+  "files": [
+    "src/",
+    "index.ts",
+    "index.js",
+    "index.d.ts",
+    "index.js.map"
+  ]
+}
