@@ -1,0 +1,39 @@
+<form [formGroup]="form" (submit)="createTodo()">
+  <h2>Create todo</h2>
+
+  <div>
+      <div>
+          <p>
+              <label for="">Title</label>
+          </p> 
+          <input type="text" formControlName="title" />
+      </div>
+
+      <div>
+          <p>
+              <label for="">Description</label>
+          </p> 
+          <textarea formControlName="description"></textarea>
+      </div>
+  </div>
+
+  <button type="submit">Create</button>
+</form>
+
+<h1>Todos</h1>
+
+<label>
+  Show done <input type="checkbox" (change)="toggleVisibleTodos()" />
+</label>
+
+<div *ngFor="let todo of todos | async">
+  <h4>
+      {{ todo.title }}
+  </h4>
+
+  <p>
+    {{ todo.description }}
+  </p>
+
+  <button (click)="markDone(todo.id)">Done</button> <button (click)="archive(todo.id)">Archive</button>
+</div>
