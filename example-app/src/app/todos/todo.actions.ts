@@ -1,6 +1,6 @@
-export const CREATE_TODO = 'CREATE_TODO';
-export const MARK_DONE = 'MARK_DONE';
-export const ARCHIVE_TODO = 'ARCHIVE_TODO';
+const CREATE_TODO = 'CREATE_TODO';
+const MARK_DONE = 'MARK_DONE';
+const ARCHIVE_TODO = 'ARCHIVE_TODO';
 
 export class CreateTodoAction {
     public type = CREATE_TODO;

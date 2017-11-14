@@ -1,6 +1,6 @@
 {
   "name": "typed-reducer",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Framework-agnostic and class-based typed reducers",
   "main": "index.js",
   "scripts": {

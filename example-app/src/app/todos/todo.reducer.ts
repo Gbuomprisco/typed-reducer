@@ -1,5 +1,5 @@
 import { Todo } from './../app.state';
-import { createReducer, Action } from 'typed-reducer';
+import { createReducer, Action } from '../../../..';
 import { CreateTodoAction, MarkTodoDoneAction, ArchiveTodoAction } from './todo.actions';
 import { createTodo } from './create-todo';
 
@@ -22,4 +22,5 @@ export class TodoReducer {
     }
 }
 
-export const todos = createReducer(TodoReducer)([]);
+const options = {freeze: true, log: true};
+export const todos = createReducer(TodoReducer, options)([]);

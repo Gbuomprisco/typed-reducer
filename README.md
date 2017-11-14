@@ -61,12 +61,22 @@ const initialState = [];
 export const todos = createReducer(TodoReducer)(initialState);
 ```
 
-### Options
-The only option available at the moment is `freeze`, which will throw errors if
-a reducer attempts to mutate the state. Useful to catch errors.
+## Options
+
+### Freeze
+In order to prevent errors related to mutating the state, you can pass the option `freeze`, so that the state will be frozen using Object.freeze. Do this only in dev mode.
 
 ```javascript
-const options = { freeze: true }; // by default freeze is false
+const options = { freeze: true };
+export const todos = createReducer(TodoReducer, options)(initialState);
+```
+
+### Log
+
+It is possible to log every action by setting the property log to `true`. This has been inspired by [ngrx-store-logger](https://github.com/btroncone/ngrx-store-logger/blob/master/src/index.ts)). Do this only in dev mode.
+
+```javascript
+const options = { log: true };
 export const todos = createReducer(TodoReducer, options)(initialState);
 ```
 
