@@ -19,25 +19,23 @@ export function createReducer<State>(Reducer: { new(): any }, options: ReducerOp
     const instance = Object.create(Reducer.prototype);
     const reducers = getReducerMethods(Reducer)(instance);
 
-    return (initialState: State): (state: State, action: ActionReducer) => State => {
-        if (options.freeze) {
-            Object.freeze(initialState);
+    return (prevState: State, action: ActionReducer): State => {
+        if (options.log) {
+            Object.freeze(prevState);
         }
 
-        return (prevState: State = initialState, action: ActionReducer): State => {
-            const fn = reducers[action.type];
-            const exists = fn && typeof fn === 'function';
-            const reducer = exists ? 
-                (...args: any[]): State => fn.apply(instance, args) : undefined;
-            const nextState = reducer ? reducer(prevState, action) : prevState;
+        const fn = reducers[action.type];
+        const exists = fn && typeof fn === 'function';
+        const reducer = exists ? 
+            (...args: any[]): State => fn.apply(instance, args) : undefined;
+        const nextState = reducer ? reducer(prevState, action) : prevState;        
 
-            if (options.log) {
-                log(action, prevState, nextState);
-            }
+        if (options.log) {
+            log(action, prevState, nextState);
+        }
 
-            return nextState;
-        };
-    }
+        return nextState;
+    };
 }
 
 /**
@@ -58,25 +56,26 @@ function log<State>(action: ActionReducer, prevState: State, nextState: State) {
  * @param Reducer 
  */
 function getReducerMethods<State>(Reducer: { new(): any }) {
-    const methods = Object.getOwnPropertyNames(Reducer.prototype);
-    const getMetadata = (method: string) => Reflect.getMetadata(method, Reducer.prototype);
+    const prototype = Reducer.prototype;
+    const methods = Object.getOwnPropertyNames(prototype);
+
+    const getMetadata = (method: string) => {
+        const meta = Reflect.getMetadata('design:paramtypes', prototype, method);
+        const action = meta && meta[1];
+
+        return action ? new action().type : undefined;
+    }
 
     return (instance: any): Methods<State> => {
         return methods
             .filter(getMetadata)
-            .map((method: string) => ({ [getMetadata(method).type]: instance[method] }))
+            .map((method: string) => ({ [getMetadata(method)]: instance[method] }))
             .filter(item => item)
-            .reduce((acc: object, current: object) => ({...acc, ...current}));
+            .reduce((acc: object, current: object) => ({...acc, ...current}), {});
     }
 }
 
 /**
  * @name Action
  */
-export function Action<C, P>(instance: C, method: string, descriptor: PropertyDescriptor) {
-    const types = Reflect.getMetadata('design:paramtypes', instance, method);
-    const action = types[1];
-    const type = new action().type;
-
-    Reflect.defineMetadata(method, { type, action }, instance);
-}
+export function Action<C, P>(instance: C, method: string, descriptor: PropertyDescriptor) {}

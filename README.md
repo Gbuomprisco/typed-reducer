@@ -27,8 +27,7 @@ export class Reducer {
     }
 }
 
-const initialState = [];
-export const reducer = createReducer(Reducer)(initialState);
+export const reducer = createReducer(Reducer);
 ```
 
 ### Full example
@@ -57,8 +56,44 @@ export class TodoReducer {
     }
 }
 
-const initialState = [];
-export const todos = createReducer(TodoReducer)(initialState);
+export const reducer = createReducer(TodoReducer);
+```
+
+### Use with Ngrx and AOT
+
+```javascript
+
+import { reducer } from './todos.reducer.ts';
+
+// initial state of the store's tree
+const initialState = {
+  todos: []
+};
+
+// create your store tree
+export const rootReducer = (
+  state: AppState = initialState,
+  action: Action
+) => {
+  return {
+    todos: reducer(state.todos, action),
+    // here go your other reducers
+  };
+};
+
+// export a factory to be AOT compliant
+export function reducerFactory() {
+  return rootReducer;
+};
+
+// let's pass the factory function to StoreModule
+@NgModule({
+  // module's configuration ...
+  imports: [
+    StoreModule.forRoot(undefined, { reducerFactory })
+  ]
+})
+export class AppModule { }
 ```
 
 ## Options
@@ -68,7 +103,7 @@ In order to prevent errors related to mutating the state, you can pass the optio
 
 ```javascript
 const options = { freeze: true };
-export const todos = createReducer(TodoReducer, options)(initialState);
+export const todos = createReducer(TodoReducer, options);
 ```
 
 ### Log
@@ -79,6 +114,6 @@ It is possible to log every action by setting the property log to `true`. This h
 
 ```javascript
 const options = { log: true };
-export const todos = createReducer(TodoReducer, options)(initialState);
+export const todos = createReducer(TodoReducer, options);
 ```
 

@@ -4,7 +4,7 @@ import { CreateTodoAction, MarkTodoDoneAction, ArchiveTodoAction } from './todo.
 import { createTodo } from './create-todo';
 
 export class TodoReducer {
-    @Action 
+    @Action
     public createTodo(state: Todo[], action: CreateTodoAction): Todo[] {
         return [ ...state, createTodo(action.payload)]
     }
@@ -16,11 +16,11 @@ export class TodoReducer {
         });
     }
 
-    @Action 
+    @Action
     public archiveTodo(state: Todo[], action: ArchiveTodoAction): Todo[] {
         return state.filter(todo => todo.id !== action.payload);
     }
 }
 
 const options = {freeze: true, log: true};
-export const todos = createReducer(TodoReducer, options)([]);
+export const reducer = createReducer(TodoReducer, options);
