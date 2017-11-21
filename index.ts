@@ -20,7 +20,7 @@ export function createReducer<State>(Reducer: { new(): any }, options: ReducerOp
     const reducers = getReducerMethods(Reducer)(instance);
 
     return (prevState: State, action: ActionReducer): State => {
-        if (options.log) {
+        if (options.freeze) {
             Object.freeze(prevState);
         }
 
